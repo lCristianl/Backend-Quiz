@@ -77,17 +77,35 @@ WSGI_APPLICATION = 'django_api.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('database_django_flutter'),
-        'USER': os.environ.get('postgres'),
-        'PASSWORD': os.environ.get('1150334017'),
-        'HOST': os.environ.get('localhost'),
-        'PORT': os.environ.get('5432'),
+# Database configuration
+if os.environ.get('VERCEL'):
+    # Para Vercel (producción) - Supabase PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DATABASE', 'postgres'),
+            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': os.environ.get('POSTGRES_HOST'),
+            'PORT': os.environ.get('DATABASE_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
+        }
     }
-}
-
+    DEBUG = False
+else:
+    # Para desarrollo local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'database_django_flutter',
+            'USER': 'postgres',
+            'PASSWORD': '1150334017',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

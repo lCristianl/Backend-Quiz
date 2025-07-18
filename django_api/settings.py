@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-470ssqg23@#7j1jw1)!k^1exqz52aw07*(bk#dl7@qtt9yg_i='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('VERCEL') != 'true'
 
 ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
 
@@ -81,30 +82,12 @@ WSGI_APPLICATION = 'django_api.wsgi.app'
 if os.environ.get('VERCEL'):
     # Para Vercel (producción) - Supabase PostgreSQL
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_DATABASE', 'postgres'),
-            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': os.environ.get('POSTGRES_HOST'),
-            'PORT': os.environ.get('DATABASE_PORT', '5432'),
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
-        }
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-    DEBUG = False
 else:
-    # Para desarrollo local
+    # Para desarrollo local - Supabase PostgreSQL
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'database_django_flutter',
-            'USER': 'postgres',
-            'PASSWORD': '1150334017',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
+        'default': dj_database_url.parse('postgres://postgres.xeqlirxhflobnygksyxf:ClqcpqlcBeYsjqVL@aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require')
     }
 
 # Password validation
